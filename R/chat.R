@@ -51,3 +51,31 @@ chat.openAI <- function(apiKey, payload, temperature = 1, top_p = 1, model = "gp
     return(paste("Request failed with status", result$status_code))
   }
 }
+
+#' Upload Chat Response to Database
+#'
+#' This function takes a response from the OpenAI Chat API and uploads relevant information to a PostgreSQL database.
+#' It extracts the chat ID, response content, model used for the response, and the timestamp of the upload, then
+#' packages these into a data frame which is uploaded to a specified database table.
+#'
+#' @param response A list containing the response from the OpenAI Chat API.
+#'                 The list structure should include `chatID`, a nested `results` list with `choices` and `model`.
+#' @param con A PostgreSQL connection object created using DBI.
+#'            This connection is used to upload the data.
+#'
+#' @return Invisible NULL; the function is used for its side effects of uploading data.
+#' @export
+#' @importFrom PDaiPostgres postgres.uploadData
+#' @examples
+#' \dontrun{
+#'   # Assuming `response` is a response object from `chat.openAI` and `con` is a valid DBI connection
+#'   chat.uploadResponse(response, con)
+#' }
+#' @seealso \code{\link[PDaiPostgres]{postgres.uploadData}}
+chat.uploadResponse <- function(response,con){
+  chatID <- response$chatID
+  content <- response$results$choices[[1]]$message$content
+  model <- response$results$model
+  chatOutput <- data.frame(chatID = chatID,model = model,content = content,dt = Sys.time())
+  PDaiPostgres::postgres.uploadData(con,'chat_output',chatOutput)
+}
