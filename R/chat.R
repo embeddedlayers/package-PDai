@@ -72,10 +72,10 @@ chat.openAI <- function(apiKey, payload, temperature = 1, top_p = 1, model = "gp
 #'   chat.uploadResponse(response, con)
 #' }
 #' @seealso \code{\link[PDaiPostgres]{postgres.uploadData}}
-chat.uploadResponse <- function(response,con){
+chat.uploadResponse <- function(response,tableName,con){
   chatID <- response$chatID
   content <- response$results$choices[[1]]$message$content
   model <- response$results$model
   chatOutput <- data.frame(chatID = chatID,model = model,content = content,dt = Sys.time())
-  PDaiPostgres::postgres.uploadData(con,'chat_output',chatOutput)
+  PDaiPostgres::postgres.uploadData(con,tableName,chatOutput)
 }
