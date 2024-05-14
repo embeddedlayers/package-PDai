@@ -4,7 +4,7 @@
 \alias{chat.uploadResponse}
 \title{Upload Chat Response to Database}
 \usage{
-chat.uploadResponse(response, con)
+chat.uploadResponse(response, tableName, con)
 }
 \arguments{
 \item{response}{A list containing the response from the OpenAI Chat API.
