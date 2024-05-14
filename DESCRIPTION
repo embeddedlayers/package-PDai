@@ -15,4 +15,6 @@ Imports:
     RPostgres,
     data.table,
     uuid,
-    jsonlite
+    jsonlite,
+    PDaiPostgres,
+    httr
