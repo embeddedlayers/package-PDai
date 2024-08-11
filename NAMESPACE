@@ -2,6 +2,7 @@
 
 export(chat.openAI)
 export(chat.uploadResponse)
+export(datasets.aggregate)
 export(ts.aggregate)
 importFrom(PDaiPostgres,postgres.uploadData)
 importFrom(data.table,as.data.table)
