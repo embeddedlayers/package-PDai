@@ -14,25 +14,29 @@
 #'   aggregated_data <- datasets.aggregate(data_list, threshold = 100)
 #'   print(aggregated_data)
 #' }
-datasets.aggregate <- function(datasets, threshold = 100) {
-  # Iterate over each dataset in the list
+datasets.aggregate <- function (datasets, threshold = 200)
+{
   for (name in names(datasets)) {
     dataset <- datasets[[name]]
 
-    # Check if the dataset has more than the specified threshold of rows
     if (nrow(dataset) > threshold) {
-      # Identify the date column (first column with a Date or POSIXct type)
-      date_name <- names(dataset)[sapply(dataset, function(col) inherits(col, c("Date", "POSIXct", "POSIXt")))][1]
-
-      # Identify all non-character, non-date columns for inclusion
-      includeColumns <- names(dataset)[sapply(dataset, is.numeric)]
-
-      # Perform aggregation
-      aggregated_data <- PDai::ts.aggregate(dataset, date_name = date_name, includeColumns = includeColumns, outputLength = 100, metric = "mean")
-
-      # Update the dataset with the aggregated data
-      datasets[[name]] <- aggregated_data
+      # Try to find a date column
+      date_columns <- names(dataset)[sapply(dataset, function(col) inherits(col, c("Date", "POSIXct", "POSIXt")))]
+      if (length(date_columns) > 0) {
+        # If a date column exists, use it for time series aggregation
+        date_name <- date_columns[1]
+        includeColumns <- names(dataset)[sapply(dataset, is.numeric)]
+        aggregated_data <- PDai::ts.aggregate(dataset, date_name = date_name,
+                                              includeColumns = includeColumns, outputLength = threshold,
+                                              metric = "mean")
+        datasets[[name]] <- aggregated_data
+      } else {
+        # If no date column, sample evenly spaced rows
+        sample_indices <- seq(1, nrow(dataset), length.out = threshold)
+        datasets[[name]] <- dataset[round(sample_indices), ]
+      }
     }
   }
   return(datasets)
 }
+
