@@ -103,7 +103,7 @@ If you use PDai in your research, please cite:
 ```
 @software{pdai2024,
   title = {PDai: AI-Powered Predictive Analytics for R},
-  author = {EmbeddedLayers Analytics},
+  author = {PeopleDrivenAI LLC},
   year = {2024},
   url = {https://github.com/embeddedlayers/package-PDai}
 }
